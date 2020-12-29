@@ -138,7 +138,7 @@ class GlobalConfig:
 
         self.postgreSettings = PostgreSettings(
             user='myusername',
-            dbname='feelo4',
+            dbname='weatherdb',
             password='root',
             host='localhost',
             port='5432'

@@ -8,9 +8,9 @@ from .models import (
 from.db_statistics import (
     db_get_all_data_by_weather_and_data
 )
-from .. functions.helpers import return_data
+from api_admin.functions.helpers import return_data
 
-async def get_weather_data(request: web_request.Request) -> web.Response:
+async def get_weather_data_stat(request: web_request.Request) -> web.Response:
     code = 200
     resp_data = await return_data()
     headers = {}

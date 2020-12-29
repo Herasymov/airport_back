@@ -3,7 +3,7 @@ from aiohttp import web_request, web
 
 from .models import (
     GetAirportData,
-    GetAirportWeather
+    GetAirportDataWeather
 )
 
 from .db_statistics import (
@@ -11,7 +11,7 @@ from .db_statistics import (
     db_get_airport_weather
 )
 
-from ..functions.helpers import return_data
+from api_admin.functions.helpers import return_data
 
 
 async def get_airport_data(request: web_request.Request) -> web.Response:
@@ -43,7 +43,7 @@ async def get_weather_data(request: web_request.Request) -> web.Response:
     headers = {}
 
     try:
-        input_data = GetAirportWeather(data=await request.json())
+        input_data = GetAirportDataWeather(data=await request.json())
     except:
         traceback.print_exc()
         resp_data["data"] = dict(request.rel_url.query)

@@ -1,9 +1,9 @@
 import traceback
 from .models import (
     GetAirportData,
-    GetAirportWeather
+    GetAirportDataWeather
 )
-
+from ...config import convert_date_format
 
 async def db_get_airport_data(data: GetAirportData, pool) -> [bool, dict]:
     """
@@ -20,16 +20,18 @@ async def db_get_airport_data(data: GetAirportData, pool) -> [bool, dict]:
         FROM airport_data
         WHERE airport_code = {code}
     """.format(
-        code=data.code
+        code="'"+data.code+"'"
     )
 
     try:
         async with pool.acquire() as conn:
             fetch_data = await conn.fetch(query)
+
     except:
         traceback.print_exc()
         status = False
     else:
+        fetch_data = fetch_data[0]
         return_data = {
             "code": fetch_data["airport_code"],
             "location_lat": fetch_data["location_lat"],
@@ -42,7 +44,7 @@ async def db_get_airport_data(data: GetAirportData, pool) -> [bool, dict]:
     return status, return_data
 
 
-async def db_get_airport_weather(data: GetAirportWeather, pool) -> [bool, dict]:
+async def db_get_airport_weather(data: GetAirportDataWeather, pool) -> [bool, dict]:
     """
     :param data:
     :param pool:
@@ -59,7 +61,10 @@ async def db_get_airport_weather(data: GetAirportWeather, pool) -> [bool, dict]:
 		JOIN time_params ON time_params.event_id = e.event_id
         WHERE airport_code = {code}
 		ORDER BY start_time DESC
-    """.format(code=data.code)
+		LIMIT {limit} OFFSET {offset}
+    """.format(code="'"+data.code+"'",
+               offset=data.limit * data.page,
+               limit=data.limit)
 
     try:
         async with pool.acquire() as conn:
@@ -69,11 +74,11 @@ async def db_get_airport_weather(data: GetAirportWeather, pool) -> [bool, dict]:
         status = False
     else:
         return_data["info"] = [{
-            "code": fetch_data["airport_code"],
+            "code": i["airport_code"],
             "type": i["type"],
             "severity": i["severity"],
-            "start_date": i["start_date"],
-            "end_date": i["end_date"]
+            "start_date": convert_date_format.convert_date_to_str(i["start_time"]),
+            "end_date": convert_date_format.convert_date_to_str(i["end_time"])
         } for i in fetch_data]
 
     return status, return_data

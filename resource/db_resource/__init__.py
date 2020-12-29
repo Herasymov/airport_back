@@ -1,0 +1,1 @@
+from .resource_init_in_db import sync_db
