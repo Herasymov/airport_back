@@ -32,7 +32,7 @@ async def db_get_airport_data(data: GetAirportData, pool) -> [bool, dict]:
         status = False
     else:
         fetch_data = fetch_data[0]
-        return_data = {
+        return_data["info"] = [{
             "code": fetch_data["airport_code"],
             "location_lat": fetch_data["location_lat"],
             "location_lng": fetch_data["location_lng"],
@@ -40,7 +40,7 @@ async def db_get_airport_data(data: GetAirportData, pool) -> [bool, dict]:
             "country": fetch_data["country"],
             "state": fetch_data["state"],
             "zipcode": fetch_data["city"]
-        }
+        }]
     return status, return_data
 
 
@@ -65,10 +65,17 @@ async def db_get_airport_weather(data: GetAirportDataWeather, pool) -> [bool, di
     """.format(code="'"+data.code+"'",
                offset=data.limit * data.page,
                limit=data.limit)
-
+    query_count = """
+            SELECT Count(*)
+            FROM airport_data
+            JOIN event_description e ON e.airport = airport_data.airport_code
+    		JOIN time_params ON time_params.event_id = e.event_id
+            WHERE airport_code = {code}
+        """.format(code="'" + data.code + "'")
     try:
         async with pool.acquire() as conn:
             fetch_data = await conn.fetch(query)
+            fetch_data2 = await conn.fetch(query_count)
     except:
         traceback.print_exc()
         status = False
@@ -80,5 +87,5 @@ async def db_get_airport_weather(data: GetAirportDataWeather, pool) -> [bool, di
             "start_date": convert_date_format.convert_date_to_str(i["start_time"]),
             "end_date": convert_date_format.convert_date_to_str(i["end_time"])
         } for i in fetch_data]
-
+        return_data["count"] = fetch_data2[0]["count"]
     return status, return_data

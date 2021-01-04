@@ -89,8 +89,7 @@ class MongoDbSetting:
 
         # TODO find config
         self.url = "mongodb://localhost:27018"
-        # self.url = f"mongodb://{user}:{password}@{host}:{port}/auto_parts"
-        self.database = 'auto_parts'
+        self.database = 'airport'
 
         self.seller_push_collection = 'seller_push'
         self.customer_push_collection = 'customer_push'
@@ -117,7 +116,7 @@ class GlobalConfig:
     def __init__(self):
         self.mongoDbSettings = MongoDbSetting(
             host="localhost",
-            port=27017,
+            port=27018,
             user="root",
             password="root"
         )
