@@ -89,7 +89,8 @@ class MongoDbSetting:
 
         # TODO find config
         self.url = "mongodb://localhost:27018"
-        self.database = 'airport'
+        self.database = 'mydatabase'
+        self.mycol = "customers"
 
         self.seller_push_collection = 'seller_push'
         self.customer_push_collection = 'customer_push'

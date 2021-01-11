@@ -10,7 +10,8 @@ from .statistics.api_statistics import (
 )
 
 from .chat.api_statistics import (
-    post_airport_data
+    post_complain,
+    get_complains
 )
 
 
@@ -27,7 +28,10 @@ class Url:
         # statistics
         self.get_all_stat = self.base_url + "/statistics/stat"
 
+        #chat
         self.post_comlain = self.base_url + "/chat"
+        self.get_complains = self.base_url + "/chat/getComplains"
+
 
 url = Url(base_url=BASE_URL)
 
@@ -38,5 +42,9 @@ routes = [
 
     # weather
     ('POST', url.get_all_stat, get_weather_data_stat, 'stat'),
-    ('POST', url.post_comlain, post_airport_data, 'chat')
+
+    #chat
+    ('POST', url.post_comlain, post_complain, 'chat'),
+    ('GET', url.get_complains, get_complains, 'getComplains')
+
 ]
